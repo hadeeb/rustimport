@@ -262,9 +262,12 @@ class CrateImportable(Importable):
             os.path.basename(self.__workspace_path or self.__crate_path)
         )
 
+        # these folders may be huge and copying them can be slow
+        ignored_dirs = ['target', '.git']
+
         def ignore(src: str, names: List[str]) -> List[str]:
-            if src == src_path and 'target' in names:
-                return ['target']  # do not copy the root "target" folder as it may be huge and slow
+            if src == src_path:
+                return [name for name in names if name in ignored_dirs]
             return []
 
         os.makedirs(output_path, exist_ok=True)
